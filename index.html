@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Audio List</title>
+    <style>
+        body {
+            background-color: dodgerblue;
+            margin: 0;
+            
+        }
+        #wrapper {
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 8px;
+            margin-bottom: 8px;
+
+            display: flex;
+            flex: 1;
+            flex-flow: column;
+            justify-content: center;
+            align-items: center;
+        }
+        li{
+            list-style: none;
+            margin-bottom: 15px;    
+        }
+        a {
+            color: white;
+            cursor: pointer;
+            cursor: hand;
+            font-size: 18px;
+        }
+        a:hover {
+            color: grey;
+        }
+        .player {
+            display: flex;
+            flex:1;
+            width: 600px;
+            height: 300px;
+            padding: 30px;
+            background-color: black;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+        }
+        h2 {
+            color: #ffffff;
+        }
+        #audioList {
+            border: 1px solid white;
+        }
+    </style>
+</head>
+<body>
+    <div id="wrapper">
+        <div class="player">
+            <h2>Now playing:</h2>
+            <h2 id="name"></h2>
+            <audio id="audio" src="" controls></audio>
+        </div>
+        <div id="audioList">
+            <h2>Tracks: </h2>
+        </div>
+    </div>
+        <script>
+            var audios = document.getElementById('audioList');
+            var list = document.createElement('ul');
+            
+            let audioList;
+            fetch('http://localhost:4000/list')
+            .then(res => res.json())
+            .then(data => {
+                audioList = data;
+                data.map(audio => {
+                    var listItem = document.createElement('li');
+                    var link = document.createElement('a');
+                    link.appendChild(document.createTextNode(audio.name));
+                    link.setAttribute("onclick","changeAudio("+JSON.stringify(audio)+")");
+                    listItem.appendChild(link);
+                    list.appendChild(listItem);
+                })
+            });
+        audios.appendChild(list);
+
+        function changeAudio(audio) {
+            let player = document.getElementById('audio');
+            player.src = "http://localhost:4000/play/"+audio.id;
+            player.play();
+            document.getElementById("name").innerHTML = audio.name;
+        }
+    </script>
+</body>
+</html>
